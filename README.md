@@ -1,12 +1,26 @@
-For saturated single-residue substitution: Given a parent protein sequence of length L, 
-every residue position is iteratively replaced with the other 19 canonical natural amino acids (excluding the native residue at that site). 
-This yields a total of L × 19 unique mutant sequences, all retaining the original sequence length L.
+A. Usages
+Two Perl scripts are provided to generate saturated single-residue variants for peptide sequences:
+1. Single amino-acid substitution mutagenesis
+perl AMP-mutation1-single-substitution.pl inputfile outfile_prefix
+2. Single amino-acid deletion mutagenesis
+perl AMP-mutation2-single-deletion.pl inputfile outfile_prefix
 
-For saturated single-residue deletion: For a parent sequence of length L, each residue position is individually removed once, 
-generating L distinct truncated variants with a uniform length of L-1.
+Input requirement
+The input file must store peptide sequences in standard FASTA format.
 
-A parent template can undergo multiple iterative rounds of substitution and deletion mutagenesis; the execution order of these two operations is interchangeable. 
-To reduce excessive computational cost, we adopted a tiered screening strategy: 
-all newly generated variant sequences are first evaluated via Macrel (our primary prediction tool or other AMP predict tools). 
-Only high-scoring candidates—defined as sequences with a Macrel score ≥ 0.9 or those ranking within the top 10% of 
-all generated variants by Macrel score—are retained and subjected to subsequent rounds of saturated substitution/deletion mutagenesis.
+Output description
+Output files are created in the same directory as the input FASTA file:
+All substitution variants: output_prefix.m1
+All deletion variants: output_prefix.m2
+
+B. Variant Generation Rules
+1. Saturated single-residue substitution
+For a parent peptide of length L, each site is replaced with the other 19 standard amino acids (excluding the native residue).
+This produces L × 19 mutants with unchanged sequence length L.
+2. Saturated single-residue deletion
+For a parent peptide of length L, each residue is deleted one at a time, generating L truncated variants with length L−1.
+
+C. Suggestions for the iterative mutagenesis workflow
+Substitution and deletion can be performed in multiple rounds in any order. To lower computational load, we adopt a tiered screening pipeline:
+1. Score all newly generated variants using Macrel (primary predictor in our study) or other AMP prediction tools.
+2. Keep only high-scoring candidates (Macrel score ≥ 0.9 OR top 10% ranked sequences) for further rounds of mutagenesis.
